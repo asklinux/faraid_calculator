@@ -1,189 +1,171 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-    <meta charset="utf-8">
-    <title>Kalkulator Faraid - Versi Lengkap Ringkas</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body{font-family:Arial, sans-serif; max-width:900px; margin:20px auto; padding:10px}
-        label{display:block; margin:8px 0}
-        input[type=number]{width:120px}
-        .row{display:flex; gap:12px; align-items:center}
-        .result{margin-top:20px}
-        table{border-collapse:collapse; width:100%; margin-top:10px}
-        th,td{border:1px solid #ddd; padding:8px}
-        th{background:#f4f4f4}
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kalkulator Faraid</title>
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
-    <h1>Kalkulator Faraid (Versi Lengkap Ringkas)</h1>
-    <p>Isikan data pewaris. Aplikasi ini mengikuti kaedah asas faraid (ringkasan) — tidak menggantikan pengiraan rasmi oleh pihak berautoriti.</p>
+<body class="bg-light">
 
-    <div>
-        <label>Jantina Si Mati:
-            <select id="gender">
-                <option value="lelaki">Lelaki</option>
-                <option value="perempuan">Perempuan</option>
-            </select>
-        </label>
-
-        <label class="row">Adakah pasangan masih hidup?
-            <select id="hasSpouse">
-                <option value="tiada">Tiada</option>
-                <option value="ada">Ada</option>
-            </select>
-            <small>(jika ada, sistem akan tentukan sama ada Suami/Isteri berdasarkan jantina si mati)</small>
-        </label>
-
-        <label>Bilangan Anak Lelaki: <input type="number" id="sons" min="0" value="0"></label>
-        <label>Bilangan Anak Perempuan: <input type="number" id="daughters" min="0" value="0"></label>
-
-        <label><input type="checkbox" id="mother"> Ibu masih hidup</label>
-        <label><input type="checkbox" id="father"> Bapa masih hidup</label>
-
-        <label>Bilangan Adik-beradik Lelaki (sekiranya tiada anak): <input type="number" id="brothers" min="0" value="0"></label>
-        <label>Bilangan Adik-beradik Perempuan (sekiranya tiada anak): <input type="number" id="sisters" min="0" value="0"></label>
-
-        <label>Jumlah Harta (RM): <input type="number" id="total" min="0" step="0.01" value="100000"></label>
-
-        <button type="button" onclick="computeFaraid()">Kira</button>
+<div class="container py-4">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Kalkulator Faraid</h3>
+        </div>
+        <div class="card-body">
+            <form id="faraidForm" class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Jumlah Harta (RM)</label>
+                    <input type="number" id="harta" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Pasangan</label>
+                    <select id="pasangan" class="form-select">
+                        <option value="tiada">Tiada</option>
+                        <option value="suami">Suami</option>
+                        <option value="isteri">Isteri</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Anak Lelaki</label>
+                    <input type="number" id="anakLelaki" class="form-control" value="0">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Anak Perempuan</label>
+                    <input type="number" id="anakPerempuan" class="form-control" value="0">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Ibu</label>
+                    <select id="ibu" class="form-select">
+                        <option value="tiada">Tiada</option>
+                        <option value="ada">Ada</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Bapa</label>
+                    <select id="bapa" class="form-select">
+                        <option value="tiada">Tiada</option>
+                        <option value="ada">Ada</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Adik-beradik Lelaki</label>
+                    <input type="number" id="adikLelaki" class="form-control" value="0">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Adik-beradik Perempuan</label>
+                    <input type="number" id="adikPerempuan" class="form-control" value="0">
+                </div>
+                <div class="col-12 text-center mt-3">
+                    <button type="submit" class="btn btn-success btn-lg">Kira Faraid</button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <div class="result">
-        <canvas id="chart" width="400" height="300"></canvas>
-        <div id="output"></div>
+    <div id="hasilSection" class="mt-4" style="display:none;">
+        <div class="card shadow-sm mb-3">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">Keputusan</h4>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Waris</th>
+                            <th>Jumlah (RM)</th>
+                            <th>Peratus (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hasilTable"></tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card shadow-sm">
+            <div class="card-header bg-secondary text-white">
+                <h4 class="mb-0">Carta Pembahagian</h4>
+            </div>
+            <div class="card-body">
+                <canvas id="faraidChart"></canvas>
+            </div>
+        </div>
     </div>
+</div>
 
 <script>
-function formatRM(x){
-    return 'RM ' + Number(x).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
-}
+document.getElementById("faraidForm").addEventListener("submit", function(e) {
+    e.preventDefault();
 
-function computeFaraid(){
-    const gender = document.getElementById('gender').value; // 'lelaki' = deceased male
-    const hasSpouse = document.getElementById('hasSpouse').value === 'ada';
-    const sons = parseInt(document.getElementById('sons').value) || 0;
-    const daughters = parseInt(document.getElementById('daughters').value) || 0;
-    const mother = document.getElementById('mother').checked;
-    const father = document.getElementById('father').checked;
-    const brothers = parseInt(document.getElementById('brothers').value) || 0;
-    const sisters = parseInt(document.getElementById('sisters').value) || 0;
-    const total = parseFloat(document.getElementById('total').value) || 0;
+    const harta = parseFloat(document.getElementById("harta").value) || 0;
+    const pasangan = document.getElementById("pasangan").value;
+    const anakLelaki = parseInt(document.getElementById("anakLelaki").value) || 0;
+    const anakPerempuan = parseInt(document.getElementById("anakPerempuan").value) || 0;
+    const ibu = document.getElementById("ibu").value;
+    const bapa = document.getElementById("bapa").value;
+    const adikLelaki = parseInt(document.getElementById("adikLelaki").value) || 0;
+    const adikPerempuan = parseInt(document.getElementById("adikPerempuan").value) || 0;
 
-    // initialize
-    let shares = {}; // amount per named category
-    let fixedSum = 0;
+    let pembahagian = {};
 
-    // 1) Spouse fixed share
-    if(hasSpouse){
-        if(gender === 'lelaki'){
-            // deceased male -> spouse is wife
-            if(sons + daughters > 0){ shares['Isteri'] = total * (1/8); }
-            else { shares['Isteri'] = total * (1/4); }
+    // Kes khas jika tiada anak, tiada ibu bapa, tiada pasangan
+    if (anakLelaki === 0 && anakPerempuan === 0 && ibu === "tiada" && bapa === "tiada" && pasangan === "tiada") {
+        if (adikLelaki > 0 || adikPerempuan > 0) {
+            pembahagian["Adik-beradik Lelaki"] = (harta / (adikLelaki + adikPerempuan)) * adikLelaki;
+            pembahagian["Adik-beradik Perempuan"] = (harta / (adikLelaki + adikPerempuan)) * adikPerempuan;
         } else {
-            // deceased female -> spouse is husband
-            if(sons + daughters > 0){ shares['Suami'] = total * (1/4); }
-            else { shares['Suami'] = total * (1/2); }
-        }
-        fixedSum += (shares[Object.keys(shares).slice(-1)[0]] || 0);
-    }
-
-    // 2) Mother fixed share
-    if(mother){
-        if(sons + daughters > 0){ shares['Ibu'] = total * (1/6); }
-        else { shares['Ibu'] = total * (1/3); }
-        fixedSum += shares['Ibu'];
-    }
-
-    // 3) Father: if children exist, father often dapat 1/6 fixed; if no children, father menjadi residu/asabah
-    let fatherPlaceholder = false;
-    if(father){
-        if(sons + daughters > 0){ shares['Bapa'] = total * (1/6); fixedSum += shares['Bapa']; }
-        else { fatherPlaceholder = true; shares['Bapa'] = 0; }
-    }
-
-    // 4) Compute residue after fixed shares
-    let residue = total - fixedSum;
-    if(residue < 0) residue = 0;
-
-    // 5) Distribute residue
-    if(sons + daughters > 0){
-        // children exist -> distribute residue to children with ratio male: female = 2:1
-        const units = (sons * 2) + (daughters * 1);
-        if(units > 0){
-            const perUnit = residue / units;
-            if(sons > 0) shares['Anak Lelaki'] = perUnit * 2 * sons;
-            if(daughters > 0) shares['Anak Perempuan'] = perUnit * daughters;
-            residue = 0;
+            pembahagian["Baitulmal"] = harta;
         }
     } else {
-        // no children
-        if(fatherPlaceholder && !hasSpouse){
-            // father takes residue (becomes asabah)
-            shares['Bapa'] = (shares['Bapa'] || 0) + residue;
-            residue = 0;
-        } else if(fatherPlaceholder && hasSpouse){
-            // father may still take residue but spouse exists; simplified: give residue to father
-            shares['Bapa'] = (shares['Bapa'] || 0) + residue;
-            residue = 0;
-        } else if(!father && (brothers + sisters) > 0){
-            // no father, distribute residue to siblings (simple rule: male=2, female=1)
-            const sibUnits = (brothers * 2) + sisters;
-            if(sibUnits > 0){
-                const perUnit = residue / sibUnits;
-                if(brothers > 0) shares['Adik-beradik Lelaki'] = perUnit * 2 * brothers;
-                if(sisters > 0) shares['Adik-beradik Perempuan'] = perUnit * sisters;
-                residue = 0;
-            }
-        } else {
-            // no defined residuary in this simple model
-            if(residue > 0) shares['Baki (tidak diagihkan)'] = residue;
-            residue = 0;
+        // Logik asas faraid ringkas
+        if (pasangan === "suami") pembahagian["Suami"] = (anakLelaki > 0 || anakPerempuan > 0) ? harta * 0.25 : harta * 0.5;
+        if (pasangan === "isteri") pembahagian["Isteri"] = (anakLelaki > 0 || anakPerempuan > 0) ? harta * (1/8) : harta * 0.25;
+        if (ibu === "ada") pembahagian["Ibu"] = (anakLelaki > 0 || anakPerempuan > 0) ? harta * (1/6) : harta * (1/3);
+        if (bapa === "ada") pembahagian["Bapa"] = (anakLelaki > 0 || anakPerempuan > 0) ? harta * (1/6) : harta * (1/3);
+        if (anakLelaki > 0 || anakPerempuan > 0) {
+            let baki = harta - Object.values(pembahagian).reduce((a,b) => a+b, 0);
+            let bahagianLelaki = anakLelaki * 2;
+            let bahagianPerempuan = anakPerempuan;
+            let jumlahBahagian = bahagianLelaki + bahagianPerempuan;
+            if (anakLelaki > 0) pembahagian["Anak Lelaki"] = (baki / jumlahBahagian) * (anakLelaki * 2);
+            if (anakPerempuan > 0) pembahagian["Anak Perempuan"] = (baki / jumlahBahagian) * anakPerempuan;
         }
     }
 
-    // 6) Prepare output: compute percents and show table + chart
-    const labels = [];
-    const data = [];
-    const percents = [];
+    // Papar hasil
+    let hasilTable = document.getElementById("hasilTable");
+    hasilTable.innerHTML = "";
+    let labels = [];
+    let data = [];
 
-    for(const k in shares){
-        const amt = Number(shares[k] || 0);
-        if(amt > 0){
-            labels.push(k);
-            data.push(amt);
-            percents.push((amt / total) * 100);
-        }
+    for (let waris in pembahagian) {
+        let jumlah = pembahagian[waris];
+        let peratus = (jumlah / harta * 100).toFixed(2);
+        hasilTable.innerHTML += `<tr><td>${waris}</td><td>${jumlah.toFixed(2)}</td><td>${peratus}</td></tr>`;
+        labels.push(waris);
+        data.push(jumlah);
     }
 
-    // draw chart
-    const ctx = document.getElementById('chart').getContext('2d');
-    if(window._faraidChart) window._faraidChart.destroy();
-    window._faraidChart = new Chart(ctx, {
+    document.getElementById("hasilSection").style.display = "block";
+
+    // Carta
+    if (window.faraidChartInstance) window.faraidChartInstance.destroy();
+    let ctx = document.getElementById("faraidChart").getContext("2d");
+    window.faraidChartInstance = new Chart(ctx, {
         type: 'pie',
         data: {
             labels: labels,
-            datasets: [{ data: data, backgroundColor: labels.map((_,i)=>['#ff6384','#36a2eb','#ffce56','#4caf50','#9966ff','#ff9f40','#c9cbcf'][i%7]) }]
-        },
-        options: {
-            plugins: {
-                tooltip: { callbacks: { label: function(ctx){ const v = ctx.raw; const p = ((v/total)*100).toFixed(2); return ctx.label + ': ' + formatRM(v) + ' ('+p+'%)'; } } }
-            }
+            datasets: [{
+                data: data,
+                backgroundColor: ['#007bff','#28a745','#ffc107','#dc3545','#6c757d','#17a2b8']
+            }]
         }
     });
-
-    // table
-    let html = '<h2>Keputusan Pembahagian</h2>';
-    html += `<p>Jumlah harta: <strong>${formatRM(total)}</strong></p>`;
-    if(labels.length === 0){ html += '<p><em>Tiada waris yang sesuai ditemui. Sila semak input atau rujuk pihak berautoriti.</em></p>'; }
-    html += '<table><thead><tr><th>Waris</th><th>Jumlah (RM)</th><th>Peratus (%)</th></tr></thead><tbody>';
-    for(let i=0;i<labels.length;i++){
-        html += `<tr><td>${labels[i]}</td><td>${formatRM(data[i])}</td><td>${percents[i].toFixed(2)}%</td></tr>`;
-    }
-    html += '</tbody></table>';
-
-    document.getElementById('output').innerHTML = html;
-}
+});
 </script>
+
 </body>
 </html>
