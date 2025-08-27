@@ -1,198 +1,403 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kalkulator Faraid</title>
-<!-- Bootstrap CSS -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kalkulator Faraid — Versi Penuh (Praktikal)</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body { background:#f8f9fa; }
+  .card { margin-bottom:1rem; }
+  small.muted { color: #6c757d; }
+</style>
 </head>
-<body class="bg-light">
-
+<body>
 <div class="container py-4">
-    <div class="card shadow-lg">
-        <div class="card-header bg-primary text-white">
-            <h3 class="mb-0">Kalkulator Faraid</h3>
+  <div class="card shadow">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">Kalkulator Faraid — Versi Penuh (Praktikal)</h4>
+    </div>
+    <div class="card-body">
+      <form id="faraidForm" class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">Jumlah Harta (RM)</label>
+          <input id="harta" class="form-control" type="number" min="0" required value="120000">
         </div>
-        <div class="card-body">
-            <form id="faraidForm" class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label">Jumlah Harta (RM)</label>
-                    <input type="number" id="harta" class="form-control" required>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Pasangan</label>
-                    <select id="pasangan" class="form-select">
-                        <option value="tiada">Tiada</option>
-                        <option value="suami">Suami</option>
-                        <option value="isteri">Isteri</option>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Anak Lelaki</label>
-                    <input type="number" id="anakLelaki" class="form-control" value="0">
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Anak Perempuan</label>
-                    <input type="number" id="anakPerempuan" class="form-control" value="0">
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Ibu</label>
-                    <select id="ibu" class="form-select">
-                        <option value="tiada">Tiada</option>
-                        <option value="ada">Ada</option>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Bapa</label>
-                    <select id="bapa" class="form-select">
-                        <option value="tiada">Tiada</option>
-                        <option value="ada">Ada</option>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Datuk</label>
-                    <select id="datuk" class="form-select">
-                        <option value="tiada">Tiada</option>
-                        <option value="ada">Ada</option>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Nenek</label>
-                    <select id="nenek" class="form-select">
-                        <option value="tiada">Tiada</option>
-                        <option value="ada">Ada</option>
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Adik-beradik Lelaki</label>
-                    <input type="number" id="adikLelaki" class="form-control" value="0">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Adik-beradik Perempuan</label>
-                    <input type="number" id="adikPerempuan" class="form-control" value="0">
-                </div>
-                <div class="col-12 text-center mt-3">
-                    <button type="submit" class="btn btn-success btn-lg">Kira Faraid</button>
-                </div>
-            </form>
+
+        <div class="col-md-4">
+          <label class="form-label">Pasangan</label>
+          <select id="pasangan" class="form-select">
+            <option value="tiada">Tiada</option>
+            <option value="suami">Suami</option>
+            <option value="isteri">Isteri</option>
+          </select>
         </div>
+
+        <div class="col-md-2">
+          <label class="form-label">Bil. Isteri (jika berkahwin & banyak isteri)</label>
+          <input id="bilIsteri" class="form-control" type="number" min="1" value="1">
+          <small class="muted">(sistem anggap pembahagian isteri sama rata)</small>
+        </div>
+
+        <!-- Anak -->
+        <div class="col-md-3"><label class="form-label">Anak Lelaki</label><input id="anakLelaki" class="form-control" type="number" min="0" value="0"></div>
+        <div class="col-md-3"><label class="form-label">Anak Perempuan</label><input id="anakPerempuan" class="form-control" type="number" min="0" value="0"></div>
+
+        <!-- Cucu/keturunan (jika anak tak ada) -->
+        <div class="col-md-3"><label class="form-label">Cucu Lelaki (dari anak lelaki)</label><input id="cucuLelaki" class="form-control" type="number" min="0" value="0"></div>
+        <div class="col-md-3"><label class="form-label">Cucu Perempuan (dari anak lelaki)</label><input id="cucuPerempuan" class="form-control" type="number" min="0" value="0"></div>
+
+        <!-- Ibu bapa & ke atas -->
+        <div class="col-md-3"><label class="form-label">Ibu</label><select id="ibu" class="form-select"><option value="tiada">Tiada</option><option value="ada">Ada</option></select></div>
+        <div class="col-md-3"><label class="form-label">Bapa</label><select id="bapa" class="form-select"><option value="tiada">Tiada</option><option value="ada">Ada</option></select></div>
+        <div class="col-md-3"><label class="form-label">Datuk (bapa kepada bapa)</label><select id="datuk" class="form-select"><option value="tiada">Tiada</option><option value="ada">Ada</option></select></div>
+        <div class="col-md-3"><label class="form-label">Nenek (ibu kepada bapa/ibu)</label><select id="nenek" class="form-select"><option value="tiada">Tiada</option><option value="ada">Ada</option></select></div>
+
+        <!-- Adik-beradik -->
+        <div class="col-md-3"><label class="form-label">Abang/Adik Lelaki (seibu-sebapa)</label><input id="adikLelaki" class="form-control" type="number" min="0" value="0"></div>
+        <div class="col-md-3"><label class="form-label">Kakak/Adik Perempuan (seibu-sebapa)</label><input id="adikPerempuan" class="form-control" type="number" min="0" value="0"></div>
+
+        <!-- Sebapa / Seibu khusus -->
+        <div class="col-md-3"><label class="form-label">Saudara Lelaki (sebapa sahaja)</label><input id="sebapaLelaki" class="form-control" type="number" min="0" value="0"></div>
+        <div class="col-md-3"><label class="form-label">Saudara Perempuan (sebapa sahaja)</label><input id="sebapaPerempuan" class="form-control" type="number" min="0" value="0"></div>
+
+        <!-- Anak saudara -->
+        <div class="col-md-3"><label class="form-label">Anak Saudara Lelaki (dari abang/adik lelaki)</label><input id="anakSaudaraL" class="form-control" type="number" min="0" value="0"></div>
+        <div class="col-md-3"><label class="form-label">Anak Saudara Perempuan (dari abang/adik perempuan)</label><input id="anakSaudaraP" class="form-control" type="number" min="0" value="0"></div>
+
+        <!-- Pak cik (bapa saudara) -->
+        <div class="col-md-3"><label class="form-label">Pak Cik Lelaki (paternal uncle)</label><input id="pakCikL" class="form-control" type="number" min="0" value="0"></div>
+        <div class="col-md-3"><label class="form-label">Pak Cik Perempuan (paternal aunt)</label><input id="pakCikP" class="form-control" type="number" min="0" value="0"></div>
+
+        <div class="col-12 text-center mt-3">
+          <button class="btn btn-success btn-lg" type="submit">Kira Faraid Penuh</button>
+        </div>
+      </form>
+
+      <small class="text-muted">Nota: sistem ini cuba laksana peraturan asas Mazhab Syafi‘i: fardh (bahagian tetap), asabah (pengambil baki), radd (pemulangan baki). Ia tidak memasukkan semua pengecualian ekstrem (contoh: perincian seibu/sebapa penuh vs separuh, hal waris bukan Islam, wasiat, hutang, hak-hak khusus dsb.).</small>
+    </div>
+  </div>
+
+  <!-- Keputusan -->
+  <div id="hasilSection" style="display:none;">
+    <div class="card shadow-sm mb-3">
+      <div class="card-header bg-info text-white"><h5 class="mb-0">Keputusan Pembahagian</h5></div>
+      <div class="card-body">
+        <table class="table table-bordered">
+          <thead><tr><th>Waris</th><th>Jumlah (RM)</th><th>Peratus (%)</th></tr></thead>
+          <tbody id="hasilTable"></tbody>
+        </table>
+        <div id="summary" class="mt-2"></div>
+      </div>
     </div>
 
-    <div id="hasilSection" class="mt-4" style="display:none;">
-        <div class="card shadow-sm mb-3">
-            <div class="card-header bg-info text-white">
-                <h4 class="mb-0">Keputusan</h4>
-            </div>
-            <div class="card-body">
-                <table class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>Waris</th>
-                            <th>Jumlah (RM)</th>
-                            <th>Peratus (%)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="hasilTable"></tbody>
-                </table>
-            </div>
-        </div>
-        <div class="card shadow-sm">
-            <div class="card-header bg-secondary text-white">
-                <h4 class="mb-0">Carta Pembahagian</h4>
-            </div>
-            <div class="card-body">
-                <canvas id="faraidChart"></canvas>
-            </div>
-        </div>
+    <div class="card shadow-sm">
+      <div class="card-header bg-secondary text-white"><h5 class="mb-0">Carta Pembahagian</h5></div>
+      <div class="card-body">
+        <canvas id="faraidChart"></canvas>
+      </div>
     </div>
+  </div>
+
 </div>
 
 <script>
-document.getElementById("faraidForm").addEventListener("submit", function(e) {
-    e.preventDefault();
+/*
+  Engine ringkas (praktikal) — langkah:
+  1. Tetapkan bahagian tetap (fardh) mengikut situasi: pasangan, ibu, bapa, datuk/nenek.
+  2. Tentukan siapa asabah (ambil baki) — biasanya anak (atau bapa jika tiada anak), atau adik-beradik jika tiada anak & tiada bapa.
+  3. Jika tiada asabah, lakukan radd (pulangkan baki kepada pemegang bahagian tetap mengikut nisbah).
+  Nota: engine ini membuat beberapa penggubalan praktikal untuk menangani banyak kes biasa.
+*/
 
-    const harta = parseFloat(document.getElementById("harta").value) || 0;
-    const pasangan = document.getElementById("pasangan").value;
-    const anakLelaki = parseInt(document.getElementById("anakLelaki").value) || 0;
-    const anakPerempuan = parseInt(document.getElementById("anakPerempuan").value) || 0;
-    const ibu = document.getElementById("ibu").value;
-    const bapa = document.getElementById("bapa").value;
-    const datuk = document.getElementById("datuk").value;
-    const nenek = document.getElementById("nenek").value;
-    const adikLelaki = parseInt(document.getElementById("adikLelaki").value) || 0;
-    const adikPerempuan = parseInt(document.getElementById("adikPerempuan").value) || 0;
+function safeNum(v){ return parseInt(v)||0; }
 
-    let pembahagian = {};
+document.getElementById("faraidForm").addEventListener("submit", function(e){
+  e.preventDefault();
 
-    // Pasangan
-    if (pasangan === "suami") pembahagian["Suami"] = (anakLelaki > 0 || anakPerempuan > 0) ? harta * 0.25 : harta * 0.5;
-    if (pasangan === "isteri") pembahagian["Isteri"] = (anakLelaki > 0 || anakPerempuan > 0) ? harta * 0.125 : harta * 0.25;
+  const harta = parseFloat(document.getElementById("harta").value) || 0;
+  const pasangan = document.getElementById("pasangan").value;
+  const bilIsteri = Math.max(1, safeNum(document.getElementById("bilIsteri").value));
+  const anakL = safeNum(document.getElementById("anakLelaki").value);
+  const anakP = safeNum(document.getElementById("anakPerempuan").value);
+  const cucuL = safeNum(document.getElementById("cucuLelaki").value);
+  const cucuP = safeNum(document.getElementById("cucuPerempuan").value);
+  const ibu = document.getElementById("ibu").value === "ada";
+  const bapa = document.getElementById("bapa").value === "ada";
+  const datuk = document.getElementById("datuk").value === "ada";
+  const nenek = document.getElementById("nenek").value === "ada";
+  const adikL = safeNum(document.getElementById("adikLelaki").value);
+  const adikP = safeNum(document.getElementById("adikPerempuan").value);
+  const sebapaL = safeNum(document.getElementById("sebapaLelaki").value);
+  const sebapaP = safeNum(document.getElementById("sebapaPerempuan").value);
+  const anakSaudaraL = safeNum(document.getElementById("anakSaudaraL").value);
+  const anakSaudaraP = safeNum(document.getElementById("anakSaudaraP").value);
+  const pakCikL = safeNum(document.getElementById("pakCikL").value);
+  const pakCikP = safeNum(document.getElementById("pakCikP").value);
 
-    // Ibu & Bapa
-    if (ibu === "ada") pembahagian["Ibu"] = (anakLelaki > 0 || anakPerempuan > 0) ? harta * (1/6) : harta * (1/3);
-    if (bapa === "ada") pembahagian["Bapa"] = (anakLelaki > 0 || anakPerempuan > 0) ? harta * (1/6) : harta * (1/3);
+  // objek untuk menyimpan peratus (nombor pecahan) dan jumlah RM
+  let shares = {}; // key -> fraction of estate (0..1) initially for fixed shares
+  let notes = [];
 
-    // Datuk & Nenek (jika bapa/ibu tiada)
-    if (bapa === "tiada" && datuk === "ada") pembahagian["Datuk"] = harta * (1/6);
-    if (ibu === "tiada" && nenek === "ada") pembahagian["Nenek"] = harta * (1/6);
+  // helper untuk jumlahkan nilai dalam shares
+  function sumShares() {
+    return Object.values(shares).reduce((a,b)=>a+(b||0),0);
+  }
 
-    // Anak (2:1 lelaki:perempuan)
-    if (anakLelaki > 0 || anakPerempuan > 0) {
-        let baki = harta - Object.values(pembahagian).reduce((a,b) => a+b, 0);
-        let bahagianLelaki = anakLelaki * 2;
-        let bahagianPerempuan = anakPerempuan;
-        let jumlahBahagian = bahagianLelaki + bahagianPerempuan;
-        if (anakLelaki > 0) pembahagian["Anak Lelaki"] = (baki / jumlahBahagian) * (anakLelaki * 2);
-        if (anakPerempuan > 0) pembahagian["Anak Perempuan"] = (baki / jumlahBahagian) * anakPerempuan;
+  // 1) Bahagian fardh (tetap)
+  // Pasangan
+  if (pasangan === "suami") {
+    // suami 1/2 jika tiada anak, kalau ada anak 1/4
+    shares["Suami"] = (anakL>0 || anakP>0 || cucuL>0 || cucuP>0) ? 1/4 : 1/2;
+  } else if (pasangan === "isteri") {
+    // isteri 1/4 jika tiada anak, kalau ada anak 1/8; jika lebih isteri, bahagi sama rata
+    let base = (anakL>0 || anakP>0 || cucuL>0 || cucuP>0) ? 1/8 : 1/4;
+    shares["Isteri (setiap)"] = base / bilIsteri;
+  }
+
+  // Ibu
+  // Peraturan praktikal: ibu 1/6 jika ada anak (atau cucu), jika tiada anak:
+  //   - jika ada adik-beradik -> 1/6 (mengikut beberapa interpretasi praktikal)
+  //   - jika tiada adik-beradik -> 1/3
+  const totalSiblings = adikL + adikP + sebapaL + sebapaP;
+  if (ibu) {
+    if (anakL>0 || anakP>0 || cucuL>0 || cucuP>0) shares["Ibu"] = 1/6;
+    else {
+      // tiada anak
+      if (totalSiblings > 0) shares["Ibu"] = 1/6; else shares["Ibu"] = 1/3;
     }
+  }
 
-    // Jika tiada anak, tiada ibu bapa, maka adik-beradik dapat (2:1 juga)
-    if (anakLelaki === 0 && anakPerempuan === 0 && ibu === "tiada" && bapa === "tiada" && datuk === "tiada" && nenek === "tiada") {
-        if (adikLelaki > 0 || adikPerempuan > 0) {
-            let bahagianLelaki = adikLelaki * 2;
-            let bahagianPerempuan = adikPerempuan;
-            let jumlahBahagian = bahagianLelaki + bahagianPerempuan;
-            if (adikLelaki > 0) pembahagian["Adik-beradik Lelaki"] = (harta / jumlahBahagian) * (adikLelaki * 2);
-            if (adikPerempuan > 0) pembahagian["Adik-beradik Perempuan"] = (harta / jumlahBahagian) * adikPerempuan;
-        } else {
-            pembahagian["Baitulmal"] = harta;
-        }
+  // Bapa
+  // Bapa 1/6 jika ada anak; jika tiada anak -> 1/3 (tetapi bapa juga boleh jadi asabah jika ada anak)
+  if (bapa) {
+    if (anakL>0 || anakP>0 || cucuL>0 || cucuP>0) shares["Bapa"] = 1/6; else shares["Bapa"] = 1/3;
+  }
+
+  // Datuk (naik tempat bapa jika bapa tiada) — beri bahagian bapa secara praktikal
+  if (!bapa && datuk) {
+    // beri datuk bahagian bapa mengikut situasi: treat datuk as 'bapa' (1/6 if anak exists else 1/3)
+    if (anakL>0 || anakP>0 || cucuL>0 || cucuP>0) shares["Datuk"] = 1/6;
+    else shares["Datuk"] = 1/3;
+  }
+
+  // Nenek (naik tempat ibu jika ibu tiada) — beri bahagian ibu praktikal
+  if (!ibu && nenek) {
+    if (anakL>0 || anakP>0 || cucuL>0 || cucuP>0) shares["Nenek"] = 1/6;
+    else {
+      // jika tiada anak & tiada adik-beradik -> 1/3 else 1/6 (praktikal)
+      if (totalSiblings>0) shares["Nenek"] = 1/6; else shares["Nenek"] = 1/3;
     }
+  }
 
-    // Papar hasil
-    let hasilTable = document.getElementById("hasilTable");
-    hasilTable.innerHTML = "";
-    let labels = [];
-    let data = [];
+  // Peraturan untuk cucu: cucu hanya ambil bila anak (keturunan) tiada (wakil) — untuk versi praktikal,
+  // kita masukkan cucu hanya jika tiada anak (direct).
+  // (Nota: pewarisan cucu mempunyai banyak varian; di sini cucu bertindak sebagai ganti anak jika anak tiada.)
+  // Kami handle cucu later sebagai asabah jika tiada anak langsung.
 
-    for (let waris in pembahagian) {
-        let jumlah = pembahagian[waris];
-        let peratus = (jumlah / harta * 100).toFixed(2);
-        hasilTable.innerHTML += `<tr><td>${waris}</td><td>${jumlah.toFixed(2)}</td><td>${peratus}</td></tr>`;
-        labels.push(waris);
-        data.push(jumlah);
+  // 2) Tentukan siapa asabah (ambil baki)
+  // Keutamaan asabah:
+  //  - Anak (anak lelaki & perempuan)  (2:1)
+  //  - Kalau tiada anak, bapa/datuk boleh jadi asabah
+  //  - Kalau tiada anak & tiada bapa/datuk, adik-beradik (2:1)
+  //  - Jika tiada yang di atas, anak saudara, pakcik, dsb. (sistem asas)
+
+  // Pertama: kalau ada anak (direct), mereka ambil baki selepas fardh.
+  const adaAnak = (anakL + anakP) > 0;
+  const adaCucu = (cucuL + cucuP) > 0;
+  const adaAsabahAnak = adaAnak;
+  let asabahGroup = null; // "anak", "bapa", "adik", "cucu", "anakSaudara", "pakcik", null
+
+  if (adaAnak) {
+    asabahGroup = "anak";
+  } else if (!adaAnak && (bapa || datuk)) {
+    // bapa atau datuk menjadi asabah (ambil baki)
+    if (bapa) asabahGroup = "bapa";
+    else if (datuk) asabahGroup = "datuk";
+  } else if (!adaAnak && !bapa && !datuk && (adikL+adikP+sebapaL+sebapaP)>0) {
+    asabahGroup = "adik";
+  } else if (!adaAnak && !bapa && !datuk && (cucuL+cucuP)>0) {
+    // sekiranya cucu wujud tetapi tiada anak, cucu boleh jadi asabah (dgn kategori tertentu)
+    asabahGroup = "cucu";
+  } else if (!adaAnak && !bapa && !datuk && (anakSaudaraL+anakSaudaraP)>0) {
+    asabahGroup = "anakSaudara";
+  } else if (!adaAnak && !bapa && !datuk && (pakCikL+pakCikP)>0) {
+    asabahGroup = "pakcik";
+  }
+
+  // 3) Kira baki selepas fardh
+  let fixedTotalFraction = sumShares();
+  // Jika shares kosong fixedTotalFraction = 0
+
+  // If spouse was given "Isteri (setiap)" as key, expand to individual wives key,
+  // to make clarity in output.
+  if (shares["Isteri (setiap)"]) {
+    // remove and add Isteri 1..n
+    const baseEach = shares["Isteri (setiap)"];
+    delete shares["Isteri (setiap)"];
+    for (let i=1;i<=bilIsteri;i++){
+      shares[`Isteri ${i}`] = baseEach;
     }
+    fixedTotalFraction = sumShares();
+  }
 
-    document.getElementById("hasilSection").style.display = "block";
+  // Ensure fixedTotalFraction not exceed 1
+  if (fixedTotalFraction > 0.999999) {
+    // Everything used by fixed shares — round issues aside
+    fixedTotalFraction = Math.min(fixedTotalFraction,1);
+  }
 
-    // Carta
-    if (window.faraidChartInstance) window.faraidChartInstance.destroy();
-    let ctx = document.getElementById("faraidChart").getContext("2d");
-    window.faraidChartInstance = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: labels,
-            datasets: [{
-                data: data,
-                backgroundColor: ['#007bff','#28a745','#ffc107','#dc3545','#6c757d','#17a2b8','#6610f2','#fd7e14']
-            }]
-        }
-    });
+  let remainderFraction = Math.max(0, 1 - fixedTotalFraction);
+
+  // 4) Assign asabah shares (baki) based on asabahGroup
+  // We compute relative units:
+  if (asabahGroup === "anak") {
+    // Anak mengambil baki dgn nisbah lelaki 2 : perempuan 1
+    let units = anakL*2 + anakP*1;
+    if (units>0) {
+      if (anakL>0) shares["Anak Lelaki (jumlah)"] = (remainderFraction) * (anakL*2 / units);
+      if (anakP>0) shares["Anak Perempuan (jumlah)"] = (remainderFraction) * (anakP*1 / units);
+    }
+  } else if (asabahGroup === "bapa" || asabahGroup === "datuk") {
+    // bapa/datuk asabah: ambil baki sepenuhnya (prinsip: asabah mengambil baki)
+    if (asabahGroup === "bapa" && bapa) shares["Bapa (asabah baki)"] = remainderFraction;
+    if (asabahGroup === "datuk" && datuk) shares["Datuk (asabah baki)"] = remainderFraction;
+  } else if (asabahGroup === "adik") {
+    // adik-beradik asabah: lelaki 2 : perempuan 1
+    const totalAdikL = adikL + sebapaL;
+    const totalAdikP = adikP + sebapaP;
+    let units = totalAdikL*2 + totalAdikP*1;
+    if (units>0) {
+      if (totalAdikL>0) shares["Adik-beradik Lelaki (jumlah)"] = remainderFraction * (totalAdikL*2 / units);
+      if (totalAdikP>0) shares["Adik-beradik Perempuan (jumlah)"] = remainderFraction * (totalAdikP*1 / units);
+    }
+  } else if (asabahGroup === "cucu") {
+    let units = cucuL*2 + cucuP*1;
+    if (units>0) {
+      if (cucuL>0) shares["Cucu Lelaki (jumlah)"] = remainderFraction * (cucuL*2 / units);
+      if (cucuP>0) shares["Cucu Perempuan (jumlah)"] = remainderFraction * (cucuP*1 / units);
+    }
+  } else if (asabahGroup === "anakSaudara") {
+    let units = anakSaudaraL*2 + anakSaudaraP*1;
+    if (units>0) {
+      if (anakSaudaraL>0) shares["Anak Saudara Lelaki (jumlah)"] = remainderFraction * (anakSaudaraL*2 / units);
+      if (anakSaudaraP>0) shares["Anak Saudara Perempuan (jumlah)"] = remainderFraction * (anakSaudaraP*1 / units);
+    }
+  } else if (asabahGroup === "pakcik") {
+    // treat pakcik as single asabah group share split by male/female count
+    let units = pakCikL*2 + pakCikP*1;
+    if (units>0) {
+      if (pakCikL>0) shares["Pak Cik Lelaki (jumlah)"] = remainderFraction * (pakCikL*2 / units);
+      if (pakCikP>0) shares["Pak Cik Perempuan (jumlah)"] = remainderFraction * (pakCikP*1 / units);
+    }
+  } else {
+    // tiada asabah — baki akan diagihkan melalui RADD kepada pemegang fardh
+    // We'll implement below.
+  }
+
+  // recalc fixedTotalFraction and remainder
+  fixedTotalFraction = sumShares();
+  remainderFraction = Math.max(0, 1 - fixedTotalFraction);
+
+  // 5) Jika tiada asabah (atau baki masih >0 kerana kita tidak beri siapa ambil),
+  //    lakukan RADD: pulangkan baki kepada pemegang bahagian tetap mengikut nisbah asal bahagian tetap mereka.
+  //    (Untuk ringkas: beri radd kepada semua pemegang saham sedia ada)
+  const asabahExists = !!asabahGroup;
+  if (!asabahExists && remainderFraction > 0.000001) {
+    // Cari pemegang 'fardh' (yang asalnya ditetapkan sebelum asabah)
+    // Kita ambil keys yang bukan label "(asabah baki)" atau "(jumlah)" utk kiraan radd.
+    // Simpan asal fraction untuk padanan radd (hanya bagi yang >0)
+    let raddCandidates = {};
+    for (let k in shares) {
+      // tags that indicate they were assigned as asabah (ambil baki) — skip them for radd base
+      if (k.includes("(asabah baki)") || k.includes("(jumlah)")) continue;
+      // include spouse, ibu, bapa, datuk, nenek, isteri n
+      if (shares[k] > 0) raddCandidates[k] = shares[k];
+    }
+    let raddTotal = Object.values(raddCandidates).reduce((a,b)=>a+b,0);
+    if (raddTotal === 0) {
+      // tiada kandidat radd -> baitulmal
+      shares["Baitulmal"] = remainderFraction;
+      remainderFraction = 0;
+    } else {
+      // tambah radd portion kepada setiap candidate
+      for (let k in raddCandidates) {
+        let add = remainderFraction * (raddCandidates[k] / raddTotal);
+        shares[k] = (shares[k] || 0) + add;
+      }
+      remainderFraction = 0;
+    }
+  }
+
+  // 6) Convert fraction -> RM
+  let hasil = {};
+  for (let k in shares) {
+    // small float rounding fix
+    let frac = shares[k];
+    if (frac < 1e-12) continue;
+    hasil[k] = Math.round(frac * harta * 100) / 100; // 2 dp
+  }
+
+  // Any tiny leftover due rounding, allocate to Bapa or suami/anak as practicality:
+  const totalPaid = Object.values(hasil).reduce((a,b)=>a+b,0);
+  let tinyLeft = Math.round((harta - totalPaid) * 100) / 100;
+  if (tinyLeft !== 0) {
+    // prefer to add to an asabah (Anak/ Bapa/ Adik/ Suami) in priority order
+    const priority = ["Anak Lelaki (jumlah)","Anak Perempuan (jumlah)","Anak Lelaki","Anak Perempuan","Bapa (asabah baki)","Bapa","Suami","Isteri 1","Isteri 2","Isteri 3"];
+    let assigned = false;
+    for (let p of priority) {
+      if (hasil[p] !== undefined) { hasil[p] += tinyLeft; assigned = true; break; }
+    }
+    if (!assigned) {
+      // else attach to first key
+      const firstKey = Object.keys(hasil)[0];
+      if (firstKey) hasil[firstKey] += tinyLeft;
+      else hasil["Baitulmal"] = (hasil["Baitulmal"]||0) + tinyLeft;
+    }
+  }
+
+  // 7) Papar keputusan
+  const hasilTable = document.getElementById("hasilTable");
+  hasilTable.innerHTML = "";
+  const labels = [], data = [];
+  for (let k in hasil) {
+    const val = hasil[k];
+    const pct = harta>0 ? ((val / harta) * 100).toFixed(2) : "0.00";
+    hasilTable.innerHTML += `<tr><td>${k}</td><td>${val.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td>${pct}%</td></tr>`;
+    labels.push(k);
+    data.push(val);
+  }
+
+  document.getElementById("hasilSection").style.display = "block";
+
+  // Carta
+  if (window.faraidChartInstance) window.faraidChartInstance.destroy();
+  const ctx = document.getElementById("faraidChart").getContext('2d');
+  window.faraidChartInstance = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: data,
+        backgroundColor: [
+          '#007bff','#28a745','#ffc107','#dc3545','#6c757d','#17a2b8','#6610f2','#fd7e14','#20c997','#6f42c1',
+          '#adb5bd','#e83e8c','#20a8d8','#f59e0b','#3b82f6'
+        ]
+      }]
+    },
+    options: {
+      responsive: true
+    }
+  });
+
+  // summary
+  const summary = document.getElementById("summary");
+  let shtml = `<p class="mb-0"><strong>Ringkasan:</strong> Bahagian tetap (fardh) = ${(sumShares()*100).toFixed(2)}% sebelum asabah/radd (anggaran). </p>`;
+  shtml += `<small class="text-muted">Nota: ini ialah pengiraan praktikal. Peraturan tertentu (contoh: siapa terhijab vs tidak, pembahagian cucu mewakili anak dsb.) mempunyai banyak pengecualian. Sila rujuk pejabat agama / peguam syariah untuk pengesahan rasmi.</small>`;
+  summary.innerHTML = shtml;
 });
-</script>
 
+</script>
 </body>
 </html>
