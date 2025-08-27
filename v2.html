@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalkulator Faraid</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .hidden { display: none; }
+  </style>
+</head>
+<body class="bg-light p-4">
+
+  <div class="container">
+    <div class="card shadow-lg p-4">
+      <h2 class="mb-3">Kalkulator Faraid</h2>
+
+      <!-- Jumlah Harta -->
+      <div class="mb-3">
+        <label class="form-label">Jumlah Harta (RM)</label>
+        <input type="number" id="jumlahHarta" class="form-control" placeholder="cth: 120000">
+      </div>
+
+      <!-- Suami/Isteri -->
+      <div class="mb-3">
+        <label class="form-label">Adakah si mati mempunyai suami/isteri?</label>
+        <select id="pasangan" class="form-select" onchange="showChildren()">
+          <option value="">-- Pilih --</option>
+          <option value="suami">Ada Suami</option>
+          <option value="isteri">Ada Isteri</option>
+          <option value="tiada">Tiada</option>
+        </select>
+      </div>
+
+      <!-- Anak -->
+      <div id="anakBox" class="mb-3 hidden">
+        <label class="form-label">Adakah si mati mempunyai anak?</label>
+        <select id="anak" class="form-select" onchange="showAyah()">
+          <option value="">-- Pilih --</option>
+          <option value="ada">Ada</option>
+          <option value="tiada">Tiada</option>
+        </select>
+      </div>
+
+      <!-- Ayah -->
+      <div id="ayahBox" class="mb-3 hidden">
+        <label class="form-label">Adakah ayah masih hidup?</label>
+        <select id="ayah" class="form-select" onchange="showIbu()">
+          <option value="">-- Pilih --</option>
+          <option value="ada">Ada</option>
+          <option value="tiada">Tiada</option>
+        </select>
+      </div>
+
+      <!-- Ibu -->
+      <div id="ibuBox" class="mb-3 hidden">
+        <label class="form-label">Adakah ibu masih hidup?</label>
+        <select id="ibu" class="form-select" onchange="showDatukNenek()">
+          <option value="">-- Pilih --</option>
+          <option value="ada">Ada</option>
+          <option value="tiada">Tiada</option>
+        </select>
+      </div>
+
+      <!-- Datuk/Nenek -->
+      <div id="datukNenekBox" class="mb-3 hidden">
+        <label class="form-label">Adakah datuk atau nenek masih hidup?</label>
+        <select id="datukNenek" class="form-select" onchange="showAdikBeradik()">
+          <option value="">-- Pilih --</option>
+          <option value="ada">Ada</option>
+          <option value="tiada">Tiada</option>
+        </select>
+      </div>
+
+      <!-- Adik-beradik -->
+      <div id="adikBox" class="mb-3 hidden">
+        <label class="form-label">Adakah adik-beradik?</label>
+        <select id="adik" class="form-select" onchange="showJumlahAdik()">
+          <option value="">-- Pilih --</option>
+          <option value="ada">Ada</option>
+          <option value="tiada">Tiada</option>
+        </select>
+      </div>
+
+      <!-- Jumlah Adik-beradik -->
+      <div id="jumlahAdikBox" class="mb-3 hidden">
+        <label class="form-label">Masukkan bilangan adik-beradik:</label>
+        <input type="number" id="jumlahAdik" class="form-control" min="1" placeholder="Contoh: 3">
+      </div>
+
+      <button class="btn btn-primary mt-3" onclick="kiraFaraid()">Kira Faraid</button>
+
+      <hr>
+      <div id="resultBox" class="hidden">
+        <h5>Keputusan Pembahagian</h5>
+        <div id="result"></div>
+        <canvas id="faraidChart" class="mt-4"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showChildren() {
+      document.getElementById('anakBox').classList.remove('hidden');
+    }
+
+    function showAyah() {
+      if (document.getElementById('anak').value === "tiada") {
+        document.getElementById('ayahBox').classList.remove('hidden');
+      }
+    }
+
+    function showIbu() {
+      document.getElementById('ibuBox').classList.remove('hidden');
+    }
+
+    function showDatukNenek() {
+      if (document.getElementById('ibu').value === "tiada") {
+        document.getElementById('datukNenekBox').classList.remove('hidden');
+      } else {
+        document.getElementById('adikBox').classList.remove('hidden');
+      }
+    }
+
+    function showAdikBeradik() {
+      if (document.getElementById('adik').value === "ada") {
+        document.getElementById('jumlahAdikBox').classList.remove('hidden');
+      }
+    }
+
+    let chartInstance = null;
+
+    function kiraFaraid() {
+      let harta = parseFloat(document.getElementById('jumlahHarta').value);
+      let pasangan = document.getElementById('pasangan').value;
+      let anak = document.getElementById('anak').value;
+      let ayah = document.getElementById('ayah').value;
+      let ibu = document.getElementById('ibu').value;
+      let datukNenek = document.getElementById('datukNenek').value;
+      let adik = document.getElementById('adik').value;
+      let jumlahAdik = parseInt(document.getElementById('jumlahAdik').value);
+
+      let pembahagian = {};
+
+      // --- Logik asas prototaip ---
+      if (anak === "tiada" && ayah === "tiada" && ibu === "ada" && adik === "ada") {
+        pembahagian["Ibu"] = harta * (1/6);
+        pembahagian["Adik-beradik ("+jumlahAdik+" org)"] = harta - pembahagian["Ibu"];
+      } else if (anak === "tiada" && ayah === "tiada" && ibu === "ada" && datukNenek === "ada") {
+        pembahagian["Ibu"] = harta * (1/6);
+        pembahagian["Datuk/Nenek"] = harta - pembahagian["Ibu"];
+      } else {
+        pembahagian["Harta Belum Disokong"] = harta;
+      }
+
+      // Papar jadual
+      let html = `<table class="table table-bordered">
+        <thead><tr><th>Waris</th><th>Bahagian (RM)</th></tr></thead><tbody>`;
+      for (let k in pembahagian) {
+        html += `<tr><td>${k}</td><td>RM ${pembahagian[k].toFixed(2)}</td></tr>`;
+      }
+      html += "</tbody></table>";
+      document.getElementById('result').innerHTML = html;
+      document.getElementById('resultBox').classList.remove('hidden');
+
+      // Papar Chart
+      let ctx = document.getElementById('faraidChart').getContext('2d');
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+      chartInstance = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: Object.keys(pembahagian),
+          datasets: [{
+            data: Object.values(pembahagian),
+            backgroundColor: ['#007bff','#28a745','#ffc107','#dc3545','#6f42c1']
+          }]
+        }
+      });
+    }
+  </script>
+</body>
+</html>
